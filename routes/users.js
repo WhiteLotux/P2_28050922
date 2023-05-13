@@ -17,7 +17,7 @@ console.log({name, email, comment, date, ip});
 
 const sqlite3 = require('sqlite3').verbose();
 
-default function select(database, table) {
+function select(database, table) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(database);
     const queries = [];
