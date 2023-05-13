@@ -15,6 +15,24 @@ console.log({name, email, comment, date, ip});
   res.redirect('/')
 });
 
+const sqlite3 = require('sqlite3').verbose();
+
+export default function select(database, table) {
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database(database);
+    const queries = [];
+    db.each(SELECT rowid as key, * FROM ${table}, (err, row) => {
+      if (err) {
+        reject(err);
+      }
+      console.log(Push row ${row.key} from database.);
+      queries.push(row);
+    });
+    console.log(queries);
+    console.log(JSON.stringify(queries));
+  });
+}
+
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
