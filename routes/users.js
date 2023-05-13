@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.post('/', function(req, res, next)){
+router.post('/', function(req, res, next) {
   let name = req.body.name;
   let email = req.body.email;
   let comment = req.body.comment;
