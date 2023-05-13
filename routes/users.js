@@ -7,7 +7,7 @@ router.post('/', function(req, res, next) {
   let email = req.body.email;
   let comment = req.body.comment;
   let date = new Date();
-  let ip = req.headers['x-forwarde-for] || req.socket.remoteAddress;
+  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
                        
     db.insert(name, email, comment, date, ip);
 
