@@ -21,7 +21,7 @@ function select(database, table) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(database);
     const queries = [];
-    db.each.SELECT * FROM Database (date, ip) => {
+    db.each.SELECT * FROM database (date, ip) => {
       if (date) {
         reject(date);
       }
