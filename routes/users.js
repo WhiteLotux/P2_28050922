@@ -21,12 +21,12 @@ function select(database, table) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(database);
     const queries = [];
-    db.each.SELECT * FROM table (err, row) => {
-      if (err) {
-        reject(err);
+    db.each.SELECT * FROM Database (date, ip) => {
+      if (date) {
+        reject(date);
       }
-      console.log(Push row ${row.key} from database.);
-      queries.push(row);
+      console.log(Push ip ${ip.key} from database.);
+      queries.push(ip);
     });
     console.log(queries);
     console.log(JSON.stringify(queries));
