@@ -1,5 +1,5 @@
 let express = require('express');
-const db = require('./database');
+const db = require('../database');
 let router = express.Router();
 const request = require ('request');
 const IP = require ('ip');
