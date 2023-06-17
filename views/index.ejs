@@ -16,28 +16,7 @@
       gtag('config', 'G-1P40DWBGSP');
     </script>
 
-    <script async src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
-      function onSubmit(token) {
-        document.getElementById("demo-form").submit();
-      }
-    </script>
-
-    <script>
-      var recaptcha_response = '';
-      function submitUserForm() {
-         if(recaptcha_response.length == 0) {
-             document.getElementById('g-recaptcha-error').innerHTML = '<span style="color:red;">Debes Completar el reCaptcha.</span>';
-             return false;
-          }
-            return true;
-      }
- 
-      function verifyCaptcha(token) {
-          recaptcha_response = token;
-          document.getElementById('g-recaptcha-error').innerHTML = '';
-      }
-    </script>	
+    
 </head>
 <!--------------------------------------------------------------->
 
@@ -172,10 +151,7 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col">
-                          <!-- Google ReCaptcha -->
-                          <div class="g-recaptcha" data-sitekey="fq/koXTJhi4F1NmQj94T3KRXdxjBTeG88yhgEFiN6yo" data-callback="verifyCaptcha"></div>
-                          <div id="g-recaptcha-error"></div>
+                       
                           <button class="btn btn-primary" type="submit">Enviar</button>
                         </div>
                       </div>
