@@ -9,7 +9,7 @@ var app = require('../app');
 
 //Pagina de inicio 
 router.get('/', function(req, res, next) {
-  let name = 'Samuel Perez'
+  let name = 'Omar Pimentel'
   res.render('index', {
     title: 'Formulario de contacto',
     name: name, });
