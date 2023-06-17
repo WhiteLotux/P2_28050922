@@ -1,47 +1,28 @@
 var express = require('express');
-var router = express.Router();
 const db = require('../database');
-const requestIp= require('request-ip');
-const { request } = require('http');
-const { json } = require('body-parser');
-const geoip = require('geoip-lite')
-const nodemailer = require('nodemailer')
+var router = express.Router();
+const request = require ('request');
+const IP = require ('ip');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 var app = require('../app');
 
-const {OAuth2Client} = require('google-auth-library')
-const client = new OAuth2Client('410114851897-63psg9avuqqusagaddkhvb1hc90nl1av.apps.googleusercontent.com');
-
-async function getEmail(datos) {
-  // Verificar el token JWT y obtener la información del usuario
-  const ticket = await client.verifyIdToken({
-    idToken: datos.credential,
-    audience: '410114851897-63psg9avuqqusagaddkhvb1hc90nl1av.apps.googleusercontent.com'
-  });
-  // Obtener un objeto con la información del usuario
-  const user = ticket.getPayload();
-  // Obtener el email del usuario
-  const email = user.email;
-  // Devolver el email
-  return email;
-}
-
-/* GET home page. */
+//Pagina de inicio 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  let name = 'Samuel Perez'
+  res.render('index', {
+    title: 'Formulario de contacto',
+    name: name, });
 });
 
-//Ir al login
-router.get('/login', function(req, res, next) {
-  // res.render('login');
-  res.render ('login', { error: false });
+router.get('/login', (req, res) => {
+  res.render('login');
+ });
 
-});
-
-router.post('/login', function(req, res, next) {
+ router.post('/login', function(req, res, next) {
   let user = req.body.user
   let pass = req.body.pass
-  if (user == process.env.ADMIN_USER && pass == process.env.ADMIN_PASS)  {
+  if (user == process.env.username && pass == process.env.clave)  {
     db.select(function (rows) {
       // console.log(rows);
       res.render('contactos', {rows: rows});
@@ -51,8 +32,6 @@ router.post('/login', function(req, res, next) {
   }
 })
 
-
-// Ir a contactos
 router.get('/contactos', function(req, res, next) {
   db.select(function (rows) {
     // console.log(rows);
@@ -60,85 +39,80 @@ router.get('/contactos', function(req, res, next) {
   });
  
 });
-router.post('/logueo', function(req, res, next){
-  const datos = req.body;
-  // Llamar a la función getEmail() para obtener el email del usuario
-  getEmail(datos).then(email => {
-    if (email == process.env.EMAIL_GOOGLE) {
-      db.select(function (rows) {
-        // console.log(rows);
-        res.render('contactos', {rows: rows});
-      });
-    } else {
-      res.status(500).send("Error al verificar el token, No eres un usuario autorizado");
-    }
-    
-  })
-})
 
-router.post('/', function(req, res, next) {
-  // console.log(process.env)
+
+
+//Ejecuta acciones del formulario
+router.post('/', function(req, res, next) {  
+  //Declaracion de variables locales
+  const captcha = req.body['g-recaptcha-response'];
+  const secretKey = process.env.SecretKey;
+  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captcha}`;
   let name = req.body.name;
-  let email = req.body._replyto;
+  let email = req.body.email;
+  let cell = req.body.cell;
   let comment = req.body.comment;
-  let date = new Date(); 
-  const clientIp = requestIp.getClientIp(req)
-  const ip = clientIp
-  let now = date.toLocaleString()
-  // let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; // @todo falta formatear la ip
-  let loc
-   // replace with the IP address you want to look up
-  // const geo = geoip.lookup("190.37.91.206");
-    const geo = geoip.lookup(ip);
+  let date = new Date();
+  let fecha = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  let Datetime = fecha;
+  let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const myIP = ip.split(",")[0];
 
-  loc = (geo.country);
-
-  db.insert(name, email, comment, now, ip, loc);
   
-  //Crear Transportador de correo
-  var transporter = nodemailer.createTransport ({
+
+
+
+  //Localizar pais de origen de la IP
+  request(`http://ip-api.com/json/${myIP}`, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+      const data = JSON.parse(body);
+      let country = data.country;
+      //Mostrar datos ingresados pos consola
+      console.log({name, email, cell, comment, Datetime, myIP, country});
+      //Insertar daton en la base de datos
+      db.insert(name, email, cell, comment, Datetime, myIP, country);
+      
+      
+      //Enviar email con los datos ingresados 
+      const transporter = nodemailer.createTransport({
+        host: process.env.hostemail,
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.useremail,
+            pass: process.env.passemail
+        }
+      });
+      const mailOptions = {
+        from: process.env.useremail,
+        //Lista de correo a enviar
+        to: ['programacion2ais@dispostable.com'],
+        subject: 'P2_28050922',
+        text: 'Un nuevo usuario se ha registrado en el formulario:\n' + 'Nombre: ' + name + '\nCorreo: ' + email + '\nTelefono: ' + cell + '\nMensaje: ' + comment + '\nFecha y hora: ' + Datetime + '\nIP: ' + myIP + '\nUbicacion: ' + country
+      };
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Correo electrónico enviado: ' + info.response);
+        }});}});
     
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    // service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  // Crear un objeto de opciones de correo
-  var mailOptions = {
-    nombre: name,
-    from: email,
-    to: process.env."programacion2ais@dispostable.com",
-    // to: "kelvinpaez2004@gmail.com",
-    subject: 'Contacto desde el formulario',
-    text: "Enviado por " + name + "\nEmail: " + email + "\nMensaje: " + comment + "\nIP: " + ip + "\nPais: " + loc
-  };
-
-  // Enviar el correo electrónico con el transportador
-  transporter.sendMail (mailOptions, function (error, info) {
-    // Manejar el error o la respuesta
-    if (error) {
-      console.log (error);
-      res.send ('Ocurrió un error al enviar el correo.');
-    } else {
-      console.log ('Correo enviado: ' + info.response);
-      res.send ('Correo enviado correctamente.');
-    }
-  });
-  res.redirect('/contact');
-});
+        request(url, (err, response, body) => {
+          if (body.success && body.score) {
+            console.log('exitoso')
+          } else {
+            console.log('fracaso')
+          }
+        });
   
+    res.redirect('/');
+});
 
-router.get('/contact', function(req, res, next) {
+router.get('/contactos', function(req, res, next) {
   db.select(function (rows) {
     console.log(rows);
   });
-  res.send('Se ha guardado la informacion del formularion en la base de datos y se envio el correo electronico');
+  res.send('ok');
 });
 
-
-module.exports = router;
+module.exports = router; 
