@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactos desde el formulario</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        /* ul {
+            background-color: blue;
+            color: white;
+            margin: 10px;
+        } */
+
+        .caja {
+            float: left;
+            /* background-color: #000; */
+            width: 300px;
+            height: 200px;
+            margin-right: 15px;
+            text-align: center;
+            box-shadow: 5px 5px 5px gray;
+            border: 1px solid black;
+            justify-content: center;
+            padding-top: 50px;
+            /* display: flex; */
+            /* align-items: center;  */
+            /* width: fit-content(20px);
+            height: fit-content(200px); 
+            
+            
+            
+           
+            
+            padding: 0px;
+            margin: 0px;
+           */
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        li {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    
+<h1>Historial de contactos desde el formulario</h1>
+<% if (rows.length > 0) { %>
+<ul>
+    <% rows.forEach(row => { %>
+    <li class="caja">
+        <ul>
+            <li><b>Id:</b> <%= row.id %></li>
+            <li><b>Nombre:</b> <%= row.name %></li>
+            <li><b>Email:</b> <%= row.email %></li>
+            <li><b>Comentario:</b> <%= row.comment %></li>
+            <li><b>Fecha:</b> <%= row.date %></li>
+            <li><b>IP:</b> <%= row.ip %></li>
+            <li><b>Pais:</b> <%= row.loc %></li>
+        </ul>
+    </li>
+    <% }) %>
+</ul>
+<% } else { %>
+<p>No se han ingresado datos</p>
+<% } %>
+</body>
+</html>
