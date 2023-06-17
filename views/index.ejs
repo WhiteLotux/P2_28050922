@@ -141,7 +141,47 @@
    </form> 
    
    <button type="submit" form="formulario">Enviar</button>
-
+ <form action='/' method="post" onsubmit="return submitUserForm();">
+                      <div class="p pb-3"><strong>Contactame con el siguiente formulario:</strong></div>
+                      <div class="row mb-3">
+                        <div class="col">
+                          <div class="input-group"><span class="input-group-addon"><i class="fa fa-user-circle"></i></span>
+                            <input class="form-control" type="text" name="name" placeholder="Nombre" required="required"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col">
+                          <div class="input-group"><span class="input-group-addon"><i class="fa fa-file-text"></i></span>
+                            <input class="form-control" type="text" name="Subject" placeholder="Sujeto" required="required"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col">
+                          <div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                            <input class="form-control" type="email" name="email" placeholder="E-mail" required="required"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col">
+                          <div class="form-group">
+                            <textarea class="form-control" name="comment" placeholder="Tu Mensaje" required="required"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <!-- Google ReCaptcha -->
+                          <div class="g-recaptcha" data-sitekey="6LeCDmImAAAAAMSb6gzVuKy6LnZc91PYeerkxKBG" data-callback="verifyCaptcha"></div>
+                          <div id="g-recaptcha-error"></div>
+                          <button class="btn btn-primary" type="submit">Enviar</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div> 
 
 <footer class="pie">Derechos reservados</footer>
 <h2 class="pie">Omar Pimentel</h2></div>
