@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
   // console.log(process.env)
   let name = req.body.name;
-  let email = req.body._replyto;
+  let email = req.body.email;
   let comment = req.body.comment;
   let date = new Date(); 
   const clientIp = requestIp.getClientIp(req)
