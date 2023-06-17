@@ -1,4 +1,85 @@
-let email = req.body._replyto;
+var express = require('express');
+var router = express.Router();
+const db = require('../database');
+const requestIp= require('request-ip');
+const { request } = require('http');
+const { json } = require('body-parser');
+const geoip = require('geoip-lite')
+const nodemailer = require('nodemailer')
+require('dotenv').config();
+var app = require('../app');
+
+const {OAuth2Client} = require('google-auth-library')
+const client = new OAuth2Client('410114851897-63psg9avuqqusagaddkhvb1hc90nl1av.apps.googleusercontent.com');
+
+async function getEmail(datos) {
+  // Verificar el token JWT y obtener la información del usuario
+  const ticket = await client.verifyIdToken({
+    idToken: datos.credential,
+    audience: '410114851897-63psg9avuqqusagaddkhvb1hc90nl1av.apps.googleusercontent.com'
+  });
+  // Obtener un objeto con la información del usuario
+  const user = ticket.getPayload();
+  // Obtener el email del usuario
+  const email = user.email;
+  // Devolver el email
+  return email;
+}
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express' });
+});
+
+//Ir al login
+router.get('/login', function(req, res, next) {
+  // res.render('login');
+  res.render ('login', { error: false });
+
+});
+
+router.post('/login', function(req, res, next) {
+  let user = req.body.user
+  let pass = req.body.pass
+  if (user == process.env.ADMIN_USER && pass == process.env.ADMIN_PASS)  {
+    db.select(function (rows) {
+      // console.log(rows);
+      res.render('contactos', {rows: rows});
+    });
+  } else {
+    res.render('login', { error: 'Datos incorrectos' });
+  }
+})
+
+
+// Ir a contactos
+router.get('/contactos', function(req, res, next) {
+  db.select(function (rows) {
+    // console.log(rows);
+    res.render('contactos', {rows: rows});
+  });
+ 
+});
+router.post('/logueo', function(req, res, next){
+  const datos = req.body;
+  // Llamar a la función getEmail() para obtener el email del usuario
+  getEmail(datos).then(email => {
+    if (email == process.env.EMAIL_GOOGLE) {
+      db.select(function (rows) {
+        // console.log(rows);
+        res.render('contactos', {rows: rows});
+      });
+    } else {
+      res.status(500).send("Error al verificar el token, No eres un usuario autorizado");
+    }
+    
+  })
+})
+
+router.post('/', function(req, res, next) {
+  // console.log(process.env)
+  let name = req.body.name;
+  let email = req.body._replyto;
   let comment = req.body.comment;
   let date = new Date(); 
   const clientIp = requestIp.getClientIp(req)
