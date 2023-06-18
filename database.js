@@ -11,7 +11,7 @@ let db = new sqlite3.Database(':memory:', (err) => {
 
 
 module.exports = {
-    insert: function (name, email, comment, Datetime, ip, loc) {
+    insert: function (name, email, comment, date, ip, loc) {
         db.run("INSERT INTO contactos (name, email, comment, date, ip, loc) VALUES (?, ?, ?, ?, ?, ?)", [name, email, comment, date, ip, loc], function (err) {
             if (err) {
                 return console.log(err.message);
