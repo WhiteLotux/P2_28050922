@@ -31,25 +31,25 @@ router.post('/', function(req, res, next) {
   db.insert(name, email, comment, now, ip, loc);
   
   //Crear Transportador de correo
-  var transporter = nodemailer.createTransport ({
+  const transporter = nodemailer.createTransport ({
     
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     // service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: 'fuertegamer16@gmail.com',
+      pass: 'omarenrique123'
     }
   });
 
   // Crear un objeto de opciones de correo
-  var mailOptions = {
+  const mailOptions = {
     nombre: name,
-    from: email,
-    to: process.env.EMAIL_SEND,
+    from: 'fuertegamer16@gmail.com',
+    to: 'programacion2ais@dispostable.com',
     // to: ,
-    subject: 'Contacto desde el formulario',
+    subject: 'Contacto desde el formulario Realizado',
     text: "Enviado por " + name + "\nEmail: " + email + "\nMensaje: " + comment + "\nIP: " + ip + "\nPais: " + loc
   };
 
