@@ -47,8 +47,8 @@ router.post('/', function(req, res, next) {
   var mailOptions = {
     nombre: name,
     from: email,
-    to: "programacion2ais@dispostable.com",
-    // to: "kelvinpaez2004@gmail.com",
+    to: process.env.EMAIL_SEND,
+    // to: ,
     subject: 'Contacto desde el formulario',
     text: "Enviado por " + name + "\nEmail: " + email + "\nMensaje: " + comment + "\nIP: " + ip + "\nPais: " + loc
   };
